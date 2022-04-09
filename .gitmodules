@@ -1,0 +1,4 @@
+[submodule "dependencies/kAFL"]
+	path = dependencies/kAFL
+	url = https://github.com/IntelLabs/kAFL.git
+	branch = legacy
