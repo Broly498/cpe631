@@ -1,0 +1,16 @@
+SRC_DIRECTORY=src
+OUTPUT_DIRECTORY=bin
+
+MODULE_INCLUDE_DIRECTORY=include/
+KAFL_DEPENDENCY_INCLUDE_DIRECTORY=dependencies/kAFL/targets/
+
+
+all: futexTarget
+
+futexTarget:
+	mkdir -p $(OUTPUT_DIRECTORY)
+	$(CXX) $(CFLAGS) -Wall -g -o $(OUTPUT_DIRECTORY)/futexTarget.exe $(SRC_DIRECTORY)/futexTarget.cpp -I$(MODULE_INCLUDE_DIRECTORY) -I$(KAFL_DEPENDENCY_INCLUDE_DIRECTORY)
+
+clean:
+	mkdir -p $(OUTPUT_DIRECTORY)
+	rm -f $(OUTPUT_DIRECTORY)/*

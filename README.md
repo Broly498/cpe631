@@ -38,16 +38,20 @@ In particular, the project utilizes QEMU/KVM and Intel PT to fuzz OS kernels.
  1.  Run "./install_Ubuntu_16_04_3_server.sh" - This will download the sample Ubuntu Server 16.04.3 LTS image, create the virtual disk images, and launch the interactive installation process.
  2.  INSIDE QEMU TERMINAL: Once the installation process has completed, the GRUB bootloader should appear in the QEMU terminal. Select the installed image and login.
  3.  INSIDE QEMU TERMINAL: Run "sudo apt install build-essential" - This will install the appropriate build tools inside of the VM.
- 4.  INSIDE QEMU TERMINAL: Run "git clone https://github.com/IntelLabs/kAFL.git && git checkout legacy" - This will clone the KAFL repository inside of the VM and checkout the appropriate branch.
- 5.  INSIDE QEMU TERMINAL: Run "cd kAFL/targets/linux_x86_64 && bash compile.sh" - This will compile the Loader agent inside of the VM (The loader agent performs KAFL handshakes between the guest and the host).
- 6.  INSIDE QEMU TERMINAL: Run "sudo shutdown" - This will shutdown the VM.
- 7.  Once the VM has shutdown and the QEMU terminal is no longer active, run "./launch_Ubuntu_16_04_03_server.sh" - This will launch the VM using QEMU-PT using a snapshot disk overlay.
- 8.  INSIDE QEMU-PT TERMINAL: Select the installed image from the GRUB bootloader and login.
- 9.  INSIDE QEMU-PT TERMINAL: Run "cd kAFL/tests/test_cases/simple/linux_x86-64 && chmod u+x load.sh && sudo ./load.sh" - This will install sample drivers which contain vulnerabilities.
- 10. INSIDE QEMU-PT TERMINAL: Run "cd ~/kAFL && ./install.sh targets" - This will compile the loader agent inside of the VM (NOTE: Errors may appear on the terminal, but that is normal).
- 11. INSIDE QEMU-PT TERMINAL: Run "sudo targets/linux_x86_64/bin/loader/loader" - This will create a QEMU-PT snapshot of the VM state which will be automatically loaded during the beginning of the kernel fuzzing process.
- 12. Run "./retreiveUbuntu_16_04_3_server_AddressRanges.sh" - This will print out the address ranges of the vulnerable drivers that were installed inside of the VM. The address ranges are used by KAFL to monitor for potential anomolous behavior.
- 13. Record the start and end address of one of the vulnerable drivers.
- 14. Run "./fuzz_Ubuntu_16_04_3_server.sh" - This will fuzz the vulnerable driver that was installed inside of the VM. It should be noted that the address ranges in this script may not match the ones that were printed in step 13. This is due to the fact that the VM snapshot image is different from the one that was created for this tutorial; therefore, the address ranges should be updated if they do not match.
+ 4.  INSIDE QEMU TERMINAL: Run "git clone https://github.com/IntelLabs/kAFL.git" - This will clone the KAFL repository inside of the VM.
+ 5.  INSIDE QEMU TERMINAL: Run "cd kAFL && git checkout legacy && cd targets && bash compile.sh" - This will checkout the appropriate kAFL branch and compile the Loader agent inside of the VM (The loader agent performs KAFL handshakes between the guest and the host).
+ 6.  INSIDE QEMU TERMINAL: Using preferred editor, modify "/etc/default/grub" and replace "GRUB_CMDLINE_LINUX_DEFAULT=""" with "GRUB_CMDLINE_LINUX_DEFAULT="rw console=ttyS0 nokaslr oops=panic nopti mitigations=off spectre_v2=off""
+ 7.  INSIDE QEMU TERMINAL: Run "sudo update-grub" - This will commit the Grub bootloader changes.
+ 8.  INSIDE QEMU TERMINAL: Run "sudo shutdown" - This will shutdown the VM.
+ 9.  Once the VM has shutdown and the QEMU terminal is no longer active, run "./launch_Ubuntu_16_04_03_server.sh" - This will launch the VM using QEMU-PT using a snapshot disk overlay.
+ 10.  INSIDE QEMU-PT TERMINAL: Select the installed image from the GRUB bootloader and login.
+ 11.  INSIDE QEMU-PT TERMINAL: Run "cd kAFL/tests/test_cases/simple/linux_x86-64 && chmod u+x load.sh && sudo ./load.sh" - This will install sample drivers which contain vulnerabilities.
+ 12. INSIDE QEMU-PT TERMINAL: Run "cd ~/kAFL && ./install.sh targets" - This will compile the loader agent inside of the VM.
+ 13. INSIDE QEMU-PT TERMINAL: Run "sudo targets/linux_x86_64/bin/loader/loader" - This will create a QEMU-PT snapshot of the VM state which will be automatically loaded during the beginning of the kernel fuzzing process.
+ 14. Run "./retreiveUbuntu_16_04_3_server_AddressRanges.sh" - This will print out the address ranges of the vulnerable drivers that were installed inside of the VM. The address ranges are used by KAFL to monitor for potential anomolous behavior.
+ 15. Record the start and end address of one of the vulnerable drivers.
+ 16. Run "./fuzz_Ubuntu_16_04_3_server.sh" - This will fuzz the vulnerable driver that was installed inside of the VM. It should be noted that the address ranges in this script may not match the ones that were printed in step 13. This is due to the fact that the VM snapshot image is different from the one that was created for this tutorial; therefore, the address ranges should be updated if they do not match.
 
-## How to interpret results
+## Visualizing Results
+ 1. Run "./launchFuzzerGuiUtility.sh" - This will start the KAFL Fuzzer GUI. This GUI lists various metrics relating to the fuzzer job. The GUI is capable of providing results in real-time or from a previously executed fuzzer job. The script assumes that the work/ directory contains the outputs of the current/previous fuzzer job.
+ 2. Examine the output directory of the current/previous fuzzer job. In this case, the work/ directory should contain the outputs of the Ubuntu fuzzer job. The directory work/corpus will contain several subdirectories that contain the fuzzer inputs which caused anomolous behaviors.
