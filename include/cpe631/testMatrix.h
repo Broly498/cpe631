@@ -27,13 +27,13 @@ int RunSingleThreadedFutexLock() noexcept
 
     memset(payload_buffer, 0xff, PAYLOAD_SIZE);
 
-    hprintf("Submitting current CR3 value to the hypervisor...");
-
-    kAFL_hypercall(HYPERCALL_KAFL_SUBMIT_CR3, 0);
-
     hprintf("Submitting kAFL payload buffer address to the hypervisor...");
 
     kAFL_hypercall(HYPERCALL_KAFL_GET_PAYLOAD, (uint64_t)payload_buffer);
+
+    hprintf("Submitting current CR3 value to the hypervisor...");
+
+    kAFL_hypercall(HYPERCALL_KAFL_SUBMIT_CR3, 0);
 
     hprintf("Beginning kAFL loop...");
 
@@ -48,7 +48,7 @@ int RunSingleThreadedFutexLock() noexcept
 
         FuzzableMutex::FuzzedLockInputs mutexLockPayload;
 
-        memcpy(&mutexLockPayload, payload_buffer->data, sizeof(FuzzableMutex::FuzzedUnlockInputs));
+        memcpy(&mutexLockPayload, payload_buffer->data, sizeof(FuzzableMutex::FuzzedLockInputs));
 
         hprintf("Payload::Uaddr2_Ignored = %lx", mutexLockPayload.Uaddr2_Ignored);
         hprintf("Payload::Val3_Ignored = %lx", mutexLockPayload.Val3_Ignored);
@@ -58,13 +58,17 @@ int RunSingleThreadedFutexLock() noexcept
         hprintf("Payload injection finished: FuzzableMutex::Lock()...");
         hprintf("Restoring the mutex state: FuzzableMutex::Unlock()...");
 
+        FuzzableMutex::FuzzedUnlockInputs mutexUnlockPayload;
+
+        memcpy(&mutexUnlockPayload, payload_buffer->data, sizeof(FuzzableMutex::FuzzedUnlockInputs));
+
         fuzzableMutex.Unlock(FuzzableMutex::FuzzedUnlockInputs{});
 
         hprintf("Read payload...");
 
         kAFL_hypercall(HYPERCALL_KAFL_RELEASE, 0);
 	}
-    
+
 #else
         fuzzableMutex.Lock(FuzzableMutex::FuzzedLockInputs{});
         fuzzableMutex.Unlock(FuzzableMutex::FuzzedUnlockInputs{});
