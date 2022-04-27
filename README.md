@@ -55,3 +55,8 @@ In particular, the project utilizes QEMU/KVM and Intel PT to fuzz OS kernels.
 ## Visualizing Results
  1. Run "./launchFuzzerGuiUtility.sh" - This will start the KAFL Fuzzer GUI. This GUI lists various metrics relating to the fuzzer job. The GUI is capable of providing results in real-time or from a previously executed fuzzer job. The script assumes that the work/ directory contains the outputs of the current/previous fuzzer job.
  2. Examine the output directory of the current/previous fuzzer job. In this case, the work/ directory should contain the outputs of the Ubuntu fuzzer job. The directory work/corpus will contain several subdirectories that contain the fuzzer inputs which caused anomolous behaviors.
+
+## How to run the Mutex Fuzzer.
+ 1.  Follow steps 1-14 of the "How to Build the Sample Ubuntu Server 16.0.4.3 LTS Fuzzer Harness (KAFL)" section.
+ 2.  Record the start and end address of the "kernel_core". We use the kernel core address since we are directly fuzzing the Linux API using the Mutex harness.
+ 3. Run "./fuzzFutexTarget.sh" - This will fuzz the Linux API futex inside of the VM. It should be noted that the address ranges in this script may not match the ones that were printed in step 13. This is due to the fact that the VM snapshot image is different from the one that was created for this tutorial; therefore, the address ranges should be updated if they do not match.
