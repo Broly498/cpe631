@@ -3,6 +3,11 @@ This repository contains the source code for the final project of CPE-631 (Advan
 The purpose of the project is to demonstrate the kernel-fuzzing capabilities of several tools.
 In particular, the project utilizes QEMU/KVM and Intel PT to fuzz OS kernels.
 
+# Contents
+ - include/     - This directory contains all of the header files for the CPE-631 fuzzer harnesses.
+ - src/         - This directory contains all of the source files for the CPE-631 fuzzer harness.
+ - dependencies - This directory contains submoduledependencies to external tools. It contains the forked kAFL repository code once submomdules are initialized.
+
 ## System Requirements:
  - Ubuntu 18.04.6 LTS (Bionic Beaver)
  - 5th generation Intel x86 Processor or later (Broadwell Architecture)
