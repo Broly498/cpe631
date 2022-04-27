@@ -7,6 +7,7 @@ In particular, the project utilizes QEMU/KVM and Intel PT to fuzz OS kernels.
  - include/     - This directory contains all of the header files for the CPE-631 fuzzer harnesses.
  - src/         - This directory contains all of the source files for the CPE-631 fuzzer harness.
  - dependencies - This directory contains submoduledependencies to external tools. It contains the forked kAFL repository code once submomdules are initialized.
+ - seeds/       - This directory contains the initial seed files that are fed to the kAFL fuzzer during fuzzer jobs.
 
 ## System Requirements:
  - Ubuntu 18.04.6 LTS (Bionic Beaver)
